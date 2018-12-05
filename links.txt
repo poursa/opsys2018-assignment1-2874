@@ -1,4 +1,0 @@
-# List of addresses
-http://www.ddtldp.org
-https://en.wikipedia.org/wiki/Linux
-https://www.gnu.org/softwar/bash/
