@@ -3,10 +3,10 @@
 #The program works provided that the input folder ends in a newline ,as the C standard says.
 
 filename=$1
-LCOUNT=0
 
 while read -r link; do #we do the checking for every link
-	LCOUNT=$((LCOUNT+1))
+	#Position of the link in the hashes
+	PREVLINKPOS=$(grep -sn "$link" hashes.txt | cut -f1 -d:)
 	if [[ !($link =~ ^"#") ]]; then #Ignoring all comments in the read file
 		#looking to see if the link is already recorded
 		#     \/
@@ -30,7 +30,7 @@ while read -r link; do #we do the checking for every link
 			##We compare the previous and current link hash/fail
 			if [ "$TEMPHASHLINE" != "$PREVLINKHASH" ]; then #There is a change so we update the velue of the hash of the site
 				echo "$link"
-				sed -i "${LCOUNT}s,.*,$TEMPHASHLINE," hashes.txt
+				sed -i "${PREVLINKPOS}s,.*,$TEMPHASHLINE," hashes.txt
 			fi
 		else #the link is new so we output its name along INIT
 			echo "$link INIT"
