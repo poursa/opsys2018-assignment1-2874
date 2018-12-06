@@ -49,12 +49,16 @@ isupdated(){
 	fi
 }
 
-
-{
-while read -r link; do #we do the checking for every link
-	if [[ !($link =~ ^"#") ]]; then #Ignoring all comments in the read file
-		isupdated "$link" &
-	fi
-done < "$filename"
-}
-wait
+#If the file given exists start working
+if [ -f "$filename" ]; then
+	{
+	while read -r link; do #we do the checking for every link
+		if [[ !($link =~ ^"#") ]]; then #Ignoring all comments in the read file
+			isupdated "$link" &
+		fi
+	done < "$filename"
+	}
+	wait
+else#Otherwise send an error
+	echo "Incorrect file arguement given"
+fi
