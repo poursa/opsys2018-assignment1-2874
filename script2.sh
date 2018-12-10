@@ -94,9 +94,9 @@ report_file_structure(){
 }
 
 #Get the links for each repository to be downloaded
-#get_repos_from_dir $1
+get_repos_from_dir $1
 #Download all the repositories cleanly
-#clone_repos
+clone_repos
 #Cleanup the temporary folders
 clean_up
 #Report the file count for each repo and it's structural integrity
