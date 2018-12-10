@@ -52,49 +52,51 @@ clone_repos(){
 }
 
 report_file_structure(){
-	for REPO in ./assignments/*; do
-		local LFLAG=0 #Flag to check all 4 needed prerequisites for the structure of one
-		local DIRNUM=0
-		local TXTNUM=0
-		local OTHERNUM=0
-		for FILE in $(find $REPO -mindepth 1); do
-			#Counting the files
-			if [[ -d "$FILE" ]]; then
-				DIRNUM=$((DIRNUM+1))
-			elif [[ $FILE == *.txt ]]; then
-				TXTNUM=$((TXTNUM+1))
+	if [ ! -n "$(find "./assignments" -maxdepth 0 -type d -empty 2>/dev/null)" ]; then
+		for REPO in ./assignments/*; do
+			local LFLAG=0 #Flag to check all 4 needed prerequisites for the structure of one
+			local DIRNUM=0
+			local TXTNUM=0
+			local OTHERNUM=0
+			for FILE in $(find $REPO -mindepth 1); do
+				#Counting the files
+				if [[ -d "$FILE" ]]; then
+					DIRNUM=$((DIRNUM+1))
+				elif [[ $FILE == *.txt ]]; then
+					TXTNUM=$((TXTNUM+1))
+				else
+					OTHERNUM=$((OTHERNUM+1))
+				fi
+			done
+			#Checking structure, by incrementing the flag each time a prerequisite is completed
+			if [ -e "$REPO/dataA.txt" ]; then
+				LFLAG=$((LFLAG+1))
+			fi
+			if [ -d "$REPO/more" ]; then
+				if [ -e "$REPO/more/dataB.txt" ]; then
+					LFLAG=$((LFLAG+1))
+				fi
+				if [ -e "$REPO/more/dataC.txt" ]; then
+					LFLAG=$((LFLAG+1))
+				fi
+			fi
+			echo "$(basename "$REPO"):"
+			echo "Number of directories: $DIRNUM"
+			echo "Number of txt files: $TXTNUM"
+			echo "Number of other files: $OTHERNUM"
+			if [[ $LFLAG = 3 && $DIRNUM = 1 && $TXTNUM = 3 && $OTHERNUM = 0 ]]; then
+				echo "Directory structure is OK"
 			else
-				OTHERNUM=$((OTHERNUM+1))
+				echo "Directory structure is NOT OK"
 			fi
 		done
-		#Checking structure, by incrementing the flag each time a prerequisite is completed
-		if [ -e "$REPO/dataA.txt" ]; then
-			LFLAG=$((LFLAG+1))
-		fi
-		if [ -d "$REPO/more" ]; then
-			if [ -e "$REPO/more/dataB.txt" ]; then
-				LFLAG=$((LFLAG+1))
-			fi
-			if [ -e "$REPO/more/dataB.txt" ]; then
-				LFLAG=$((LFLAG+1))
-			fi
-		fi
-		echo "$(basename "$REPO"):"
-		echo "Number of directories: $DIRNUM"
-		echo "Number of txt files: $TXTNUM"
-		echo "Number of other files: $OTHERNUM"
-		if [[ $LFLAG = 3 && $DIRNUM = 1 && $TXTNUM = 3 && $OTHERNUM = 0 ]]; then
-			echo "Directory structure is OK"
-		else
-			echo "Directory structure is NOT OK"
-		fi
-	done
+	fi
 }
 
 #Get the links for each repository to be downloaded
-get_repos_from_dir $1
+#get_repos_from_dir $1
 #Download all the repositories cleanly
-clone_repos
+#clone_repos
 #Cleanup the temporary folders
 clean_up
 #Report the file count for each repo and it's structural integrity
